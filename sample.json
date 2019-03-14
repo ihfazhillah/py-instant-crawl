@@ -1,0 +1,12 @@
+{
+    "tip-of-day": {
+        "expression": "string(//div[@class='tip-of-day'])",
+        "type": "xpath",
+        "getter": "get"
+    },
+    "testimonial": {
+        "expression": ".testimonial",
+        "type": "css",
+        "getter": "getall"
+    }
+}
