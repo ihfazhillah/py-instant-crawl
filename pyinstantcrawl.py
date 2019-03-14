@@ -7,7 +7,7 @@ from parsel import Selector
 sample_json = """
 {
     "tip-of-day": {
-        "expression": "//div[@class='tip-of-day']/p/text()",
+        "expression": "string(//div[@class='tip-of-day'])",
         "type": "xpath",
         "getter": "get"
     },
@@ -19,12 +19,12 @@ sample_json = """
 }
 """
 
-def generate_parse_func(selector, selector_data):
-    """TODO: Docstring for generate_parse_func.
+def parse_node(selector, selector_data):
+    """ Parse the node
 
-    :selector: TODO
-    :selector_data: TODO
-    :returns: TODO
+    :selector: parsel.Selector instance
+    :selector_data: a dictionary object contains expression, type, and getter
+    :returns: string
 
     """
     stype = selector_data['type']
@@ -33,30 +33,34 @@ def generate_parse_func(selector, selector_data):
     selectlis = getattr(selector, stype)(expression)
     return getattr(selectlis, getter)()
 
-def parse_json(json_string):
+def parse(selector, json_string):
+    """doing real parsing
+
+    :selector: parsel.Selector instance
+    :json_string: the whole json scraper template
+    :returns: dict
+
+    """
     obj = json.loads(json_string)
     result = {}
-    for key in obj:
-        result[key] = lambda s: generate_parse_func(s, obj[key])
+
+    for key, selector_data in obj.items():
+        result[key] = parse_node(selector, selector_data)
 
     return result
 
+def fetch(url, template):
+    """Do actual fetch and return the selected data
 
-if __name__ == "__main__":
-    url = "https://pragprog.com"
+    :url: TODO
+    :template: TODO
+    :returns: TODO
+
+    """
     resp = requests.get(url)
     selector = Selector(resp.text)
+    parsed = parse(selector, template)
+    return parsed
 
-    obj = parse_json(sample_json)
-    for o in obj:
-        print(obj[o](selector))
-    print(obj)
-
-    # parse
-    # obj = json.loads(sample_json)
-    # for key, val in obj.items():
-    #     print(key)
-    #     data = generate_parse_func(selector, val)
-    #     print(data)
-
-
+if __name__ == "__main__":
+    print(fetch("https://pragprog.com", sample_json))
