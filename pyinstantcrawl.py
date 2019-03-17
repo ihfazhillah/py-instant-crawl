@@ -19,6 +19,33 @@ sample_json = """
 }
 """
 
+sample_with_child = """
+{
+    "contents": {
+        "expression": "//section[@id='content']/ul/li",
+        "type": "xpath",
+        "children": {
+            "datetime": {
+                "expression": "./time/text()",
+                "type": "xpath",
+                "getter": "get"
+            },
+            "url": {
+                "expression": "./a/@href",
+                "type": "xpath",
+                "getter": "get"
+            },
+            "title": {
+                "expression": "./a/text()",
+                "type": "xpath",
+                "getter": "get"
+            }
+        }
+    }
+}
+"""
+
+
 def parse_node(selector, selector_data):
     """ Parse the node
 
@@ -33,7 +60,8 @@ def parse_node(selector, selector_data):
     selectlis = getattr(selector, stype)(expression)
     return getattr(selectlis, getter)()
 
-def parse(selector, json_string):
+
+def parse(selector, json_ob):
     """doing real parsing
 
     :selector: parsel.Selector instance
@@ -41,13 +69,14 @@ def parse(selector, json_string):
     :returns: dict
 
     """
-    obj = json.loads(json_string)
+    # obj = json.loads(json_string)
     result = {}
 
-    for key, selector_data in obj.items():
+    for key, selector_data in json_ob.items():
         result[key] = parse_node(selector, selector_data)
 
     return result
+
 
 def fetch(url, template):
     """Do actual fetch and return the selected data
@@ -59,8 +88,12 @@ def fetch(url, template):
     """
     resp = requests.get(url)
     selector = Selector(resp.text)
-    parsed = parse(selector, template)
+    json_ob = json.loads(template)
+    parsed = parse(selector, json_ob)
     return parsed
+
 
 if __name__ == "__main__":
     print(fetch("https://pragprog.com", sample_json))
+    print("nested")
+    print(fetch("https://blog.ihfazh.com/archives.html", sample_with_child))
