@@ -26,4 +26,6 @@ python library for scrape websites by specifying template in json
 python main.py https://pragprog.com sample.json
 ```
 
+now its work with parent + child structure. Please check sample_child.json and sample_child_child.json.
+
 
