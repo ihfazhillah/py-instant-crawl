@@ -1,0 +1,23 @@
+{
+    "contents": {
+        "expression": "//section[@id='content']/ul/li",
+        "type": "xpath",
+        "children": {
+            "datetime": {
+                "expression": "./time/text()",
+                "type": "xpath",
+                "getter": "get"
+            },
+            "url": {
+                "expression": "./a/@href",
+                "type": "xpath",
+                "getter": "get"
+            },
+            "title": {
+                "expression": "./a/text()",
+                "type": "xpath",
+                "getter": "get"
+            }
+        }
+    }
+}

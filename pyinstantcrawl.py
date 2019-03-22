@@ -2,6 +2,7 @@ import json
 
 import requests
 from parsel import Selector
+import pprint
 
 
 sample_json = """
@@ -57,11 +58,12 @@ def parse_node(selector, selector_data):
     stype = selector_data['type']
     expression = selector_data['expression']
     getter = selector_data.get('getter', 'get')
-    selectlis = getattr(selector, stype)(expression)
-    return getattr(selectlis, getter)()
+    selectlist = getattr(selector, stype)(expression)
+
+    return getattr(selectlist, getter)(), selectlist
 
 
-def parse(selector, json_ob):
+def parse(result, selector, json_ob, is_child=False, parent=None):
     """doing real parsing
 
     :selector: parsel.Selector instance
@@ -69,11 +71,19 @@ def parse(selector, json_ob):
     :returns: dict
 
     """
-    # obj = json.loads(json_string)
-    result = {}
+    for key, val in json_ob.items():
+        children = val.get('children')
 
-    for key, selector_data in json_ob.items():
-        result[key] = parse_node(selector, selector_data)
+        if not children:
+            res, _ = parse_node(selector, val)
+            result[key] = res
+        else:
+            _, p_selector = parse_node(selector, val)
+            l_result = []
+            for s in p_selector:
+                with_child = parse({}, s, children)
+                l_result.append(with_child)
+            result[key] = l_result
 
     return result
 
@@ -86,14 +96,16 @@ def fetch(url, template):
     :returns: TODO
 
     """
+    result = {}
     resp = requests.get(url)
     selector = Selector(resp.text)
     json_ob = json.loads(template)
-    parsed = parse(selector, json_ob)
+    parsed = parse(result, selector, json_ob)
     return parsed
 
 
 if __name__ == "__main__":
     print(fetch("https://pragprog.com", sample_json))
     print("nested")
-    print(fetch("https://blog.ihfazh.com/archives.html", sample_with_child))
+    pprint.pprint(
+        fetch("https://blog.ihfazh.com/archives.html", sample_with_child))
