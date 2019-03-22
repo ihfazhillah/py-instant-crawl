@@ -1,0 +1,39 @@
+{
+    "articles": {
+        "expression": "//section[@id='listing']/article",
+        "type": "xpath",
+        "children": {
+            "url": {
+                "expression": ".//header//a/@href",
+                "type": "xpath",
+                "getter": "get"
+            },
+            "title": {
+                "expression": ".//header//a/text()",
+                "type": "xpath",
+                "getter": "get"
+            },
+            "tags": {
+                "expression": ".//header//div[has-class('w3-margin-right')][not(contains(@class, 'w3-opacity'))]/span",
+                "type": "xpath",
+                "children": {
+                    "url": {
+                        "expression": "./a/@href",
+                        "type": "xpath",
+                        "getter": "get"
+                    },
+                    "title": {
+                        "expression": "./a/text()",
+                        "type": "xpath",
+                        "getter": "get"
+                    }
+                }
+            }
+        }
+    },
+    "next": {
+        "expression": "//ul[has-class('w3-pagination')]/li/a[not(contains(@class, 'w3-green'))][last()]/@href",
+        "type": "xpath",
+        "getter": "get"
+    }
+}
