@@ -5,7 +5,7 @@ with open('README.md', 'r') as readme:
 
 setup(
     name='pyinstantcrawl',
-    version='1.0.0',
+    version='1.0.1',
     description='scrape a website with json template',
     long_description=long_desc,
     url='https://github.com/ihfazhillah/py-instant-crawl',
