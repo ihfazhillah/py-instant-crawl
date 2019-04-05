@@ -22,7 +22,7 @@ setup(
     ],
     entry_points={
         'console_scripts': [
-            'pyinstantcrawl=main:fetch'
+            'pyinstantcrawl=pyinstantcrawl.main:fetch'
         ]
     },
     classifiers=[
