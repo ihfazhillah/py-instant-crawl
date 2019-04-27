@@ -29,7 +29,7 @@ pip install pyinstantcrawl
 
 2. call the command below
 ```python
-python main.py https://pragprog.com sample.json
+pyinstantcrawl https://pragprog.com sample.json
 ```
 
 now its work with parent + child structure. Check it at examples folder.
